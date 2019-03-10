@@ -36,7 +36,6 @@ python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/file.txt --dest_p
 
 # Dry run of the sync. src_idx and dest_idx refer to the index of the object store within the config
 # This will copy s3://root/* -> s3://workspace/*
-python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/file.txt --dest_path s3://workspace/ --dry_run
 python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/ --dest_path s3://workspace/ --dry_run
 
 # You can also pass forward args to s4cmd. Any arg that this script does not consume (with the exception of --dry_run) 
