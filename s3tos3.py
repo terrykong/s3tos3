@@ -126,8 +126,8 @@ Example usage:
     parser.add_argument('--s3tos3_config', type=str, default=os.path.join(HOME_DIR,'.s3tos3.config'), required=False, help='Config for s3tos3 (default: %(default)r)')
     parser.add_argument('--src_path', type=str, default='', help='Source path (default: %(default)r)')
     parser.add_argument('--dest_path', type=str, default='', help='Destination path (default: %(default)r)')
-    parser.add_argument('--src_idx', type=int, default='', help='Source object store index (default: %(default)r)')
-    parser.add_argument('--dest_idx', type=int, default='', help='Destination object store index (default: %(default)r)')
+    parser.add_argument('--src_idx', type=int, default=None, help='Source object store index (default: %(default)r)')
+    parser.add_argument('--dest_idx', type=int, default=None, help='Destination object store index (default: %(default)r)')
     parser.add_argument('--tmp_dir', type=str, default=os.path.join(os.sep,'tmp'), help='The local tmp dir to copy from src to dest (default: %(default)r)')
     parser.add_argument('-n','--dry_run', default=False, action='store_true', help='Dryrun sync (default: %(default)r)')
 
