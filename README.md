@@ -43,3 +43,8 @@ python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/ --dest_path s3:/
 #  are passed straight to s4cmd
 python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/ --dest_path s3://workspace/ --multipart-split-size=100000000 -c 8 -t 3
 ```
+
+TODOs
+===
++ Right now the script will copy one file to disk at a time and then sync that file to the destination object store. Might want to add an option to do these in parallel.
++ Even better, avoid copying to local disk :)
