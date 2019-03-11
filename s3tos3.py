@@ -97,7 +97,8 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
         if dry_run:
             print('[{}/{} | {}] {} -> {}'.format(i+1, len(src_files), normalize_bytes(int(dir_or_size)), single_src_path, single_dest_path))
         else:
-            tmp_filename = os.path.join(tmp_dir, os.path.basename(single_src_path))
+            # unique-ish file
+            tmp_filename = os.path.join(tmp_dir, os.path.basename(single_src_path) + uuid.uuid4().hex)
             try:
                 print('[{}/{} | {}] SRC->LOCAL->DEST | {} -> {}'.format(i+1, len(src_files), normalize_bytes(int(dir_or_size)), single_src_path, tmp_filename), end='')
                 start = time.time()
