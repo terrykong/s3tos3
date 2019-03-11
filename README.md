@@ -29,6 +29,12 @@ Using this script requires a json config in ~/.s3tos3.config with lists of stora
 # Lists all buckets in all object stores listed in config
 python s3tos3.py --ls_all 
 
+# List content of path in all object stores
+python s3tos3.py --ls_all --ls_path s3://bucket1
+
+# List content of path in the second object store
+python s3tos3.py --ls_idx 1 --ls_path s3://bucket1
+
 # Dry run of the sync. src_idx and dest_idx refer to the index of the object store within the config
 # This will copy s3://root/file.txt -> s3://workspace/file.txt
 python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/file.txt --dest_path s3://workspace/ --dry_run
@@ -41,6 +47,9 @@ python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/ --dest_path s3:/
 # You can also pass forward args to s4cmd. Any arg that this script does not consume (with the exception of --dry_run) 
 #  are passed straight to s4cmd
 python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/ --dest_path s3://workspace/ --multipart-split-size=100000000 -c 8 -t 3
+
+# If / doesn't have enough mem for your copies and you want to use a different tmp dir then
+python s3tos3.py --src_idx 0 --dest_idx 1 --src_path s3://root/file.txt --dest_path s3://workspace/ --tmp_dir /a/different/tmp/dir
 ```
 
 TODOs
