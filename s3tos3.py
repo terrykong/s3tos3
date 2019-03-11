@@ -58,7 +58,7 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
     src_preset, dest_preset = config[src_idx], config[dest_idx]
     
     src_is_dir = src_path.endswith('/')
-    dest_is_dir = src_path.endswith('/')
+    dest_is_dir = dest_path.endswith('/')
     # Copy from src store to local
     src_files = s4cmd_run(('ls -r ' if src_is_dir else 'ls ') + src_path, src_preset).split('\n') 
 
@@ -72,6 +72,12 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
             continue
         rel_path = single_src_path[len(src_path)+1:]
         single_dest_path = os.path.join(dest_path,rel_path) if rel_path else rel_path
+        if rel_path:
+            single_dest_path = os.path.join(dest_path,rel_path)
+        elif dest_is_dir:
+            single_dest_path = os.path.join(dest_path,os.path.basename(single_src_path))
+        else:
+            single_dest_path = dest_path
         if dry_run:
             print('{} -> {}'.format(single_src_path, single_dest_path))
         else:
