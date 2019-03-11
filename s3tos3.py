@@ -17,6 +17,7 @@ import sys
 import json
 import subprocess
 import uuid
+import time
 
 HOME_DIR = os.path.expanduser("~")
 
@@ -65,7 +66,7 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
     if extra_s4_opts:
         print('=== Using extra S4CMD_OPTS [{}] ==='.format(extra_s4_opts))
     print('=== Copying from [{}] to [{}] ==='.format(src_preset['AWS_HOST'], dest_preset['AWS_HOST']))
-    for line in src_files:
+    for i,line in enumerate(src_files):
         tokens = line.split()
         dir_or_size, single_src_path = tokens[-2], tokens[-1]
         if dir_or_size == 'DIR' or single_src_path.endswith('/'):
@@ -79,14 +80,16 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
         else:
             single_dest_path = dest_path
         if dry_run:
-            print('{} -> {}'.format(single_src_path, single_dest_path))
+            print('[{}/{}] {} -> {}'.format(i+1, len(src_files), single_src_path, single_dest_path))
         else:
             tmp_filename = os.path.join(tmp_dir, os.path.basename(single_src_path))
             try:
-                print('SRC->LOCAL->DEST | {} -> {}'.format(single_src_path, tmp_filename), end='')
+                print('[{}/{}] SRC->LOCAL->DEST | {} -> {}'.format(i+1, len(src_files), single_src_path, tmp_filename), end='')
+                start = time.time()
                 s4cmd_run('get -s {} {}'.format(single_src_path, tmp_filename), src_preset, extra_s4_opts=extra_s4_opts)
-                print(' -> {}'.format(single_dest_path))
+                print(' -> {}'.format(single_dest_path), end='')
                 s4cmd_run('put -s {} {}'.format(tmp_filename, single_dest_path), dest_preset, extra_s4_opts=extra_s4_opts)
+                print(' | Took {}sec'.format(time.time()-start))
             except:
                 os.unlink(tmp_filename)
                 sys.stderr.write('Something went wrong, exitting and cleaning up')
