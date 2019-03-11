@@ -27,6 +27,15 @@ def sec2time(s):
     d, h = divmod(h, 24)
     return "%d days %02d:%02d:%02d" % (d, h, m, s)
 
+powerPrefix = ['','K','M','G','T','P']
+def normalize_bytes(b):
+    power = 2**10
+    n = 0
+    while b >= power:
+        b /=  power
+        n += 1
+    return '{}{}B'.format(round(b), powerPrefix[n])
+
 def s4cmd_run(command, preset, extra_s4_opts=''):
     aws_host, access_key, secret_key = preset['AWS_HOST'], preset['AWS_ACCESS_KEY_ID'], preset['AWS_SECRET_ACCESS_KEY']
     s4cmd_opts = '--endpoint-url=http://{}/ --access-key={} --secret-key={} {}'.format(aws_host, access_key, secret_key, extra_s4_opts) 
@@ -86,11 +95,11 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
         else:
             single_dest_path = dest_path
         if dry_run:
-            print('[{}/{}] {} -> {}'.format(i+1, len(src_files), single_src_path, single_dest_path))
+            print('[{}/{} | {}] {} -> {}'.format(i+1, len(src_files), normalize_bytes(int(dir_or_size)), single_src_path, single_dest_path))
         else:
             tmp_filename = os.path.join(tmp_dir, os.path.basename(single_src_path))
             try:
-                print('[{}/{}] SRC->LOCAL->DEST | {} -> {}'.format(i+1, len(src_files), single_src_path, tmp_filename), end='')
+                print('[{}/{} | {}] SRC->LOCAL->DEST | {} -> {}'.format(i+1, len(src_files), normalize_bytes(int(dir_or_size)), single_src_path, tmp_filename), end='')
                 start = time.time()
                 s4cmd_run('get -s {} {}'.format(single_src_path, tmp_filename), src_preset, extra_s4_opts=extra_s4_opts)
                 print(' -> {}'.format(single_dest_path), end='')
