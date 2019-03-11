@@ -21,6 +21,12 @@ import time
 
 HOME_DIR = os.path.expanduser("~")
 
+def sec2time(s):
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    return "%d days %02d:%02d:%02d" % (d, h, m, s)
+
 def s4cmd_run(command, preset, extra_s4_opts=''):
     aws_host, access_key, secret_key = preset['AWS_HOST'], preset['AWS_ACCESS_KEY_ID'], preset['AWS_SECRET_ACCESS_KEY']
     s4cmd_opts = '--endpoint-url=http://{}/ --access-key={} --secret-key={} {}'.format(aws_host, access_key, secret_key, extra_s4_opts) 
@@ -89,7 +95,7 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
                 s4cmd_run('get -s {} {}'.format(single_src_path, tmp_filename), src_preset, extra_s4_opts=extra_s4_opts)
                 print(' -> {}'.format(single_dest_path), end='')
                 s4cmd_run('put -s {} {}'.format(tmp_filename, single_dest_path), dest_preset, extra_s4_opts=extra_s4_opts)
-                print(' | Took {}sec'.format(time.time()-start))
+                print(' | Took [{}]'.format(sec2time(time.time()-start)))
             except:
                 os.unlink(tmp_filename)
                 sys.stderr.write('Something went wrong, exitting and cleaning up')
