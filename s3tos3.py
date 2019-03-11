@@ -34,10 +34,14 @@ def load_s3tos3_config(config_file):
         config = json.load(f)
     return config
 
-def ls_all(config):
+def ls_stores(config, ls_path='', ls_idx=-1):
+    if ls_idx > len(config) - 1:
+        raise ValueError('ls_idx should be either -1 or in [0,{}] but got: {}'.format(len(config)-1,ls_idx))
+    elif ls_idx >= 0 :
+        config = config[ls_idx:ls_idx+1]
     for i,preset in enumerate(config):
         print('=== HOST[idx = {}]: {} ==='.format(i,preset['AWS_HOST']))
-        print(s4cmd_run('ls', preset))
+        print(s4cmd_run('ls ' + ls_path, preset))
 
 def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir, dry_run=False, extra_s4_opts=''):
     if src_idx > len(config)-1:
@@ -123,6 +127,8 @@ Example usage:
 '''
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=example_usage)
     parser.add_argument('--ls_all', default=False, action='store_true', help='Will call ls at the root level of all object stores (default: %(default)r)')
+    parser.add_argument('--ls_idx', type=int, default=None, help='s4cmd ls a particular object ls_idx=-1 means all stores (default: %(default)r)')
+    parser.add_argument('--ls_path', type=str, default='', help='Path to ls for a particular object store, used with --ls_idx (default: %(default)r)')
     parser.add_argument('--s3tos3_config', type=str, default=os.path.join(HOME_DIR,'.s3tos3.config'), required=False, help='Config for s3tos3 (default: %(default)r)')
     parser.add_argument('--src_path', type=str, default='', help='Source path (default: %(default)r)')
     parser.add_argument('--dest_path', type=str, default='', help='Destination path (default: %(default)r)')
@@ -140,8 +146,10 @@ Example usage:
 
     config = load_s3tos3_config(known_args.s3tos3_config)
 
-    if known_args.ls_all:
-        ls_all(config)
+    if known_args.ls_all and known_args.ls_idx is not None:
+        raise ValueError('Should not provide both ls_all and ls_idx')
+    elif known_args.ls_all or known_args.ls_idx is not None:
+        ls_stores(config, known_args.ls_path, known_args.ls_idx if known_args.ls_idx is not None else -1)
         sys.exit(0)
     
     sync_between_stores(config,
