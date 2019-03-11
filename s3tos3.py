@@ -86,7 +86,7 @@ def sync_between_stores(config, src_idx, dest_idx, src_path, dest_path, tmp_dir,
         dir_or_size, single_src_path = tokens[-2], tokens[-1]
         if dir_or_size == 'DIR' or single_src_path.endswith('/'):
             continue
-        rel_path = single_src_path[len(src_path)+1:]
+        rel_path = single_src_path[len(src_path):]
         single_dest_path = os.path.join(dest_path,rel_path) if rel_path else rel_path
         if rel_path:
             single_dest_path = os.path.join(dest_path,rel_path)
